@@ -1,0 +1,19 @@
+flyway:
+server:
+  port: 8085
+spring:
+  application:
+    name: webserver
+  datasource:
+    username: ${DB_USER}
+    passsword: ${DB_PASSWORD}
+    url: ${DB_URL}
+  flyway:
+    enabled: true
+    url: ${DB_URL}
+    schemas: ${DB_NAME}
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate

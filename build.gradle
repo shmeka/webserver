@@ -1,0 +1,79 @@
+buildscript {
+	ext {
+        dockerVersion = "0.33.0"
+        dockerComposeVersion = "0.16.11"
+        flywayVersion = "9.8.1"
+        lombokVersion = "1.18.24"
+	}
+}
+
+plugins {
+    id "com.avast.gradle.docker-compose" version "${dockerComposeVersion}"
+    id "com.github.sherter.google-java-format" version "0.9"
+    id "com.palantir.docker" version "${dockerVersion}"
+	id "io.spring.dependency-management" version "1.0.11.RELEASE"
+	id "java"
+    id "org.flywaydb.flyway" version "${flywayVersion}"
+	id "org.springframework.boot" version "2.6.6"
+}
+
+group                 = "com.demo.webserver"
+version               = "0.0.1"
+sourceCompatibility   = "11"
+def containerTag      = "demo/${project.name}"
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/snapshot" }
+}
+
+dependencies {
+    implementation "org.flywaydb:flyway-core"
+    implementation "org.postgresql:postgresql"
+	implementation "org.springframework.boot:spring-boot-starter"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc"
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+googleJavaFormat {
+    options style: "AOSP"
+    exclude "src/generated/**/*.java"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+docker {
+    name "${containerTag}:${version}"
+    dockerfile file("src/main/docker/Dockerfile")
+    files tasks.bootJar.outputs, "src/main/docker/run.sh"
+    buildArgs ([
+        APP_NAME: project.name,
+        APP_VERSION: version,
+    ])
+}
+
+dockerCompose {
+    environment.put "APP_VERSION", version
+    environment.put "LOCAL_DB_NAME", "webserver"
+    environment.put "LOCAL_DB_USER", "webserver"
+    environment.put "LOCAL_DB_PASSWORD", "password123"
+}
+
+wrapper {
+	gradleVersion = "7.4.2"
+}

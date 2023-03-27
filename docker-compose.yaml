@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  webserver:
+    image: demo/webserver:${APP_VERSION}
+    ports:
+      - 8085:8085
+    depends_on:
+      - postgres
+    environment:
+      - DB_USER=webserver
+      - DB_NAME=${LOCAL_DB_NAME}
+      - DB_PASSWORD=${LOCAL_DB_PASSWORD}
+      - DB_URL=jdbc:postgresql://postgres:5432/${LOCAL_DB_NAME}
+
+  postgres:
+    image: postgres:15.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=${LOCAL_DB_NAME}
+      - POSTGRES_USER=${LOCAL_DB_USER}
+      - POSTGRES_PASSWORD=${LOCAL_DB_PASSWORD}
+      - POSTGRESQL_DATABASE=${LOCAL_DB_NAME}
+    expose:
+      - 5432
