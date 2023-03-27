@@ -4,5 +4,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class WebServerConfig {
-    // TODO: flyway
+    // TODO: flyway config
 }

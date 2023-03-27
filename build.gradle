@@ -17,10 +17,10 @@ plugins {
     id "org.springframework.boot" version "2.6.6"
 }
 
-group                 = "com.demo.webserver"
-version               = "0.0.1"
-sourceCompatibility   = "11"
-def containerTag      = "demo/${project.name}"
+group               = "com.demo.webserver"
+version             = "0.0.1"
+sourceCompatibility = "11"
+def containerTag    = "demo/${project.name}"
 
 configurations {
     compileOnly {
@@ -71,7 +71,7 @@ dockerCompose {
     environment.put "APP_VERSION", version
     environment.put "LOCAL_DB_NAME", "webserver"
     environment.put "LOCAL_DB_USER", "webserver"
-    environment.put "LOCAL_DB_PASSWORD", "password123"
+    environment.put "LOCAL_DB_PASSWORD", UUID.randomUUID().toString()
 }
 
 wrapper {
